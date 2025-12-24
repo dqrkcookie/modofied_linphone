@@ -4,6 +4,8 @@
 **Version:** 2.0  
 **Last Updated:** December 22, 2025
 
+> 📘 **Important:** This documentation uses placeholder values like `YOUR_SERVER_IP` and `YOUR_SIP_SERVER_IP`. Please replace these with your actual IP addresses and network configuration. See [CONFIGURATION_GUIDE.md](CONFIGURATION_GUIDE.md) for detailed instructions.
+
 ---
 
 ## 📋 Table of Contents
@@ -127,7 +129,7 @@ Linphone Caller is a production-ready HTTP API service that enables programmatic
 1. API Request
    POST /api/v1/call/start
    {
-     "destination": "sip:1001@192.168.1.40:5060",
+     "destination": "sip:1001@YOUR_SIP_SERVER_IP:5060",
      "duration": 120,
      "audio_file": "greeting.wav",      // Optional
      "play_after_seconds": 2             // Optional
@@ -137,7 +139,7 @@ Linphone Caller is a production-ready HTTP API service that enables programmatic
    - Launch: linphonec -c /path/to/config
    - Send: soundcard use files
    - Send: play /dev/zero (stop background noise)
-   - Send: call sip:1001@192.168.1.40:5060
+   - Send: call sip:1001@YOUR_SIP_SERVER_IP:5060
    ▼
 3. Monitor Output Streams
    - Parse stdout for status: ringing → connected → established
@@ -204,7 +206,7 @@ Linphone Caller is a production-ready HTTP API service that enables programmatic
 ├── logs/
 │   ├── app.log                    # Main application log
 │   └── calls/                     # Per-call detailed logs
-│       ├── call_20251222_103045_1001_at_192.168.1.40_5060_abc12345.log
+│       ├── call_20251222_103045_1001_at_YOUR_SIP_SERVER_IP_5060_abc12345.log
 │       └── ...
 ├── venv/                          # Python virtual environment
 ├── requirements.txt               # Python dependencies
@@ -225,7 +227,7 @@ Check if the service is running and linphone is available.
 
 **Request:**
 ```bash
-curl http://192.168.1.80:8000/api/v1/health
+curl http://YOUR_SERVER_IP:8000/api/v1/health
 ```
 
 **Response:**
@@ -255,7 +257,7 @@ Content-Type: application/json
 **Request Body:**
 ```json
 {
-  "destination": "sip:1001@192.168.1.40:5060",
+  "destination": "sip:1001@YOUR_SIP_SERVER_IP:5060",
   "duration": 120,
   "audio_file": "greeting.wav",
   "play_after_seconds": 2
@@ -274,28 +276,28 @@ Content-Type: application/json
 **Example Request:**
 ```bash
 # Basic call (no auto-play)
-curl -X POST http://192.168.1.80:8000/api/v1/call/start \
+curl -X POST http://YOUR_SERVER_IP:8000/api/v1/call/start \
   -H 'Content-Type: application/json' \
   -d '{
-    "destination": "sip:1001@192.168.1.40:5060",
+    "destination": "sip:1001@YOUR_SIP_SERVER_IP:5060",
     "duration": 120
   }'
 
 # Call with auto-play (plays immediately after answer)
-curl -X POST http://192.168.1.80:8000/api/v1/call/start \
+curl -X POST http://YOUR_SERVER_IP:8000/api/v1/call/start \
   -H 'Content-Type: application/json' \
   -d '{
-    "destination": "sip:1001@192.168.1.40:5060",
+    "destination": "sip:1001@YOUR_SIP_SERVER_IP:5060",
     "duration": 180,
     "audio_file": "greeting.wav",
     "play_after_seconds": 0
   }'
 
 # Call with delayed auto-play (waits 5 seconds after answer)
-curl -X POST http://192.168.1.80:8000/api/v1/call/start \
+curl -X POST http://YOUR_SERVER_IP:8000/api/v1/call/start \
   -H 'Content-Type: application/json' \
   -d '{
-    "destination": "sip:1001@192.168.1.40:5060",
+    "destination": "sip:1001@YOUR_SIP_SERVER_IP:5060",
     "duration": 180,
     "audio_file": "welcome_message.wav",
     "play_after_seconds": 5
@@ -307,10 +309,10 @@ curl -X POST http://192.168.1.80:8000/api/v1/call/start \
 {
   "status": "ringing",
   "call_id": "a1b2c3d4-1234-5678-abcd-0123456789ab",
-  "destination": "sip:1001@192.168.1.40:5060",
+  "destination": "sip:1001@YOUR_SIP_SERVER_IP:5060",
   "started_at": "2025-12-22T10:30:15.123456",
   "duration_limit": 120,
-  "log_file": "logs/calls/call_20251222_103015_1001_at_192.168.1.40_5060_a1b2c3d4.log",
+  "log_file": "logs/calls/call_20251222_103015_1001_at_YOUR_SIP_SERVER_IP_5060_a1b2c3d4.log",
   "message": "Call initiated successfully"
 }
 ```
@@ -318,7 +320,7 @@ curl -X POST http://192.168.1.80:8000/api/v1/call/start \
 **Response (Error - 409 Conflict):**
 ```json
 {
-  "detail": "A call is already in progress to sip:1002@192.168.1.40:5060. End the current call before starting a new one."
+  "detail": "A call is already in progress to sip:1002@YOUR_SIP_SERVER_IP:5060. End the current call before starting a new one."
 }
 ```
 
@@ -339,14 +341,14 @@ Check the status of the active call.
 
 **Request:**
 ```bash
-curl http://192.168.1.80:8000/api/v1/call/status
+curl http://YOUR_SERVER_IP:8000/api/v1/call/status
 ```
 
 **Response (Call Active - 200):**
 ```json
 {
   "status": "active",
-  "destination": "sip:1001@192.168.1.40:5060",
+  "destination": "sip:1001@YOUR_SIP_SERVER_IP:5060",
   "started_at": "2025-12-22T10:30:15.123456",
   "duration": 35,
   "duration_limit": 120,
@@ -427,7 +429,7 @@ Customer: Do you have a pharmacy?
 
 **Example Request (Basic):**
 ```bash
-curl -X POST http://192.168.1.80:8000/api/v1/call/playAudio \
+curl -X POST http://YOUR_SERVER_IP:8000/api/v1/call/playAudio \
   -H 'Content-Type: application/json' \
   -d '{
     "audio_file": "menu_options.wav"
@@ -436,7 +438,7 @@ curl -X POST http://192.168.1.80:8000/api/v1/call/playAudio \
 
 **Example Request (Custom Silence):**
 ```bash
-curl -X POST http://192.168.1.80:8000/api/v1/call/playAudio \
+curl -X POST http://YOUR_SERVER_IP:8000/api/v1/call/playAudio \
   -H 'Content-Type: application/json' \
   -d '{
     "audio_file": "menu_options.wav",
@@ -447,7 +449,7 @@ curl -X POST http://192.168.1.80:8000/api/v1/call/playAudio \
 **Example Request (No Silence Gap):**
 ```bash
 # Use this only if you want continuous audio without breaks
-curl -X POST http://192.168.1.80:8000/api/v1/call/playAudio \
+curl -X POST http://YOUR_SERVER_IP:8000/api/v1/call/playAudio \
   -H 'Content-Type: application/json' \
   -d '{
     "audio_file": "menu_options.wav",
@@ -461,7 +463,7 @@ curl -X POST http://192.168.1.80:8000/api/v1/call/playAudio \
   "call_id": "a1b2c3d4-1234-5678-abcd-0123456789ab",
   "status": "active",
   "audio_file": "menu_options.wav",
-  "log_file": "logs/calls/call_20251222_103015_1001_at_192.168.1.40_5060_a1b2c3d4.log",
+  "log_file": "logs/calls/call_20251222_103015_1001_at_YOUR_SIP_SERVER_IP_5060_a1b2c3d4.log",
   "message": "Audio injection started successfully"
 }
 ```
@@ -562,7 +564,7 @@ Terminate the active call before its duration limit.
 
 **Request:**
 ```bash
-curl -X POST http://192.168.1.80:8000/api/v1/call/end
+curl -X POST http://YOUR_SERVER_IP:8000/api/v1/call/end
 ```
 
 **Response (Success - 200):**
@@ -571,7 +573,7 @@ curl -X POST http://192.168.1.80:8000/api/v1/call/end
   "call_id": "a1b2c3d4-1234-5678-abcd-0123456789ab",
   "status": "terminated",
   "duration": 45,
-  "log_file": "logs/calls/call_20251222_103015_1001_at_192.168.1.40_5060_a1b2c3d4.log",
+  "log_file": "logs/calls/call_20251222_103015_1001_at_YOUR_SIP_SERVER_IP_5060_a1b2c3d4.log",
   "message": "Call ended successfully"
 }
 ```
@@ -610,7 +612,7 @@ sudo chown $USER:$USER /opt/linphone-caller
 # 3. Transfer files from local machine to your VM (/opt/linphone-caller/)
 # (From your local machine)
 cd /Users/ratbalas/Documents/Projects/cce/finesse-gadgets
-rsync -avz linphone-caller/ administrator@192.168.1.80:/opt/linphone-caller/
+rsync -avz linphone-caller/ YOUR_USERNAME@YOUR_SERVER_IP:/opt/linphone-caller/
 
 # 4. Run installation script (on VM)
 cd /opt/linphone-caller
@@ -783,7 +785,7 @@ Service Status:
 **Usage:**
 ```bash
 # After rsync from local machine
-ssh administrator@192.168.1.80
+ssh YOUR_USERNAME@YOUR_SERVER_IP
 
 # Run update script
 /opt/linphone-caller/scripts/update.sh
@@ -947,7 +949,7 @@ tail -f logs/calls/call_20251222_*.log
   ✅ Deploy Complete!
 =====================================
 
-API Endpoint: http://192.168.1.80:8000
+API Endpoint: http://YOUR_SERVER_IP:8000
 ```
 
 **When to run:**
@@ -1043,13 +1045,13 @@ upload_bw=0
 **Adding New Audio:**
 ```bash
 # From local machine
-scp your_audio.wav administrator@192.168.1.80:/opt/linphone-caller/assets/audio/
+scp your_audio.wav YOUR_USERNAME@YOUR_SERVER_IP:/opt/linphone-caller/assets/audio/
 
 # Verify
-ssh administrator@192.168.1.80 "ls -lh /opt/linphone-caller/assets/audio/"
+ssh YOUR_USERNAME@YOUR_SERVER_IP "ls -lh /opt/linphone-caller/assets/audio/"
 
 # Use immediately (no restart needed)
-curl -X POST http://192.168.1.80:8000/api/v1/call/playAudio \
+curl -X POST http://YOUR_SERVER_IP:8000/api/v1/call/playAudio \
   -H 'Content-Type: application/json' \
   -d '{"audio_file":"your_audio.wav"}'
 ```
@@ -1062,18 +1064,18 @@ curl -X POST http://192.168.1.80:8000/api/v1/call/playAudio \
 
 ```bash
 # Start call
-curl -X POST http://192.168.1.80:8000/api/v1/call/start \
+curl -X POST http://YOUR_SERVER_IP:8000/api/v1/call/start \
   -H 'Content-Type: application/json' \
   -d '{
-    "destination": "sip:1001@192.168.1.40:5060",
+    "destination": "sip:1001@YOUR_SIP_SERVER_IP:5060",
     "duration": 60
   }'
 
 # Check status
-curl http://192.168.1.80:8000/api/v1/call/status
+curl http://YOUR_SERVER_IP:8000/api/v1/call/status
 
 # End call
-curl -X POST http://192.168.1.80:8000/api/v1/call/end
+curl -X POST http://YOUR_SERVER_IP:8000/api/v1/call/end
 ```
 
 ---
@@ -1082,20 +1084,20 @@ curl -X POST http://192.168.1.80:8000/api/v1/call/end
 
 ```bash
 # Call that plays greeting immediately when answered
-curl -X POST http://192.168.1.80:8000/api/v1/call/start \
+curl -X POST http://YOUR_SERVER_IP:8000/api/v1/call/start \
   -H 'Content-Type: application/json' \
   -d '{
-    "destination": "sip:1001@192.168.1.40:5060",
+    "destination": "sip:1001@YOUR_SIP_SERVER_IP:5060",
     "duration": 120,
     "audio_file": "greeting.wav",
     "play_after_seconds": 0
   }'
 
 # Call that waits 5 seconds after answer before playing
-curl -X POST http://192.168.1.80:8000/api/v1/call/start \
+curl -X POST http://YOUR_SERVER_IP:8000/api/v1/call/start \
   -H 'Content-Type: application/json' \
   -d '{
-    "destination": "sip:1001@192.168.1.40:5060",
+    "destination": "sip:1001@YOUR_SIP_SERVER_IP:5060",
     "duration": 180,
     "audio_file": "welcome_message.wav",
     "play_after_seconds": 5
@@ -1108,10 +1110,10 @@ curl -X POST http://192.168.1.80:8000/api/v1/call/start \
 
 ```bash
 # Start call
-curl -X POST http://192.168.1.80:8000/api/v1/call/start \
+curl -X POST http://YOUR_SERVER_IP:8000/api/v1/call/start \
   -H 'Content-Type: application/json' \
   -d '{
-    "destination": "sip:1001@192.168.1.40:5060",
+    "destination": "sip:1001@YOUR_SIP_SERVER_IP:5060",
     "duration": 180
   }'
 
@@ -1119,7 +1121,7 @@ curl -X POST http://192.168.1.80:8000/api/v1/call/start \
 sleep 5
 
 # Play first audio (with default 1.5s silence gap for transcription)
-curl -X POST http://192.168.1.80:8000/api/v1/call/playAudio \
+curl -X POST http://YOUR_SERVER_IP:8000/api/v1/call/playAudio \
   -H 'Content-Type: application/json' \
   -d '{"audio_file":"greeting.wav", "silence_after_seconds": 1.5}'
 
@@ -1127,7 +1129,7 @@ curl -X POST http://192.168.1.80:8000/api/v1/call/playAudio \
 sleep 10
 
 # Play second audio (with 2s silence gap)
-curl -X POST http://192.168.1.80:8000/api/v1/call/playAudio \
+curl -X POST http://YOUR_SERVER_IP:8000/api/v1/call/playAudio \
   -H 'Content-Type: application/json' \
   -d '{"audio_file":"menu_options.wav", "silence_after_seconds": 2.0}'
 
@@ -1135,12 +1137,12 @@ curl -X POST http://192.168.1.80:8000/api/v1/call/playAudio \
 sleep 10
 
 # Play third audio (with default silence gap)
-curl -X POST http://192.168.1.80:8000/api/v1/call/playAudio \
+curl -X POST http://YOUR_SERVER_IP:8000/api/v1/call/playAudio \
   -H 'Content-Type: application/json' \
   -d '{"audio_file":"closing_message.wav"}'
 
 # End call
-curl -X POST http://192.168.1.80:8000/api/v1/call/end
+curl -X POST http://YOUR_SERVER_IP:8000/api/v1/call/end
 ```
 
 ---
@@ -1149,10 +1151,10 @@ curl -X POST http://192.168.1.80:8000/api/v1/call/end
 
 ```bash
 # Start with auto-play greeting
-curl -X POST http://192.168.1.80:8000/api/v1/call/start \
+curl -X POST http://YOUR_SERVER_IP:8000/api/v1/call/start \
   -H 'Content-Type: application/json' \
   -d '{
-    "destination": "sip:1001@192.168.1.40:5060",
+    "destination": "sip:1001@YOUR_SIP_SERVER_IP:5060",
     "duration": 180,
     "audio_file": "greeting.wav",
     "play_after_seconds": 2
@@ -1164,14 +1166,14 @@ curl -X POST http://192.168.1.80:8000/api/v1/call/start \
 sleep 15
 
 # Inject additional audio manually
-curl -X POST http://192.168.1.80:8000/api/v1/call/playAudio \
+curl -X POST http://YOUR_SERVER_IP:8000/api/v1/call/playAudio \
   -H 'Content-Type: application/json' \
   -d '{"audio_file":"menu_options.wav"}'
 
 sleep 10
 
 # More audio
-curl -X POST http://192.168.1.80:8000/api/v1/call/playAudio \
+curl -X POST http://YOUR_SERVER_IP:8000/api/v1/call/playAudio \
   -H 'Content-Type: application/json' \
   -d '{"audio_file":"thank_you.wav"}'
 ```
@@ -1185,7 +1187,7 @@ curl -X POST http://192.168.1.80:8000/api/v1/call/playAudio \
 import requests
 import time
 
-API_BASE = "http://192.168.1.80:8000/api/v1"
+API_BASE = "http://YOUR_SERVER_IP:8000/api/v1"
 
 def make_ivr_call():
     """Make an IVR call with multiple prompts."""
@@ -1193,7 +1195,7 @@ def make_ivr_call():
     # Start call with auto-play greeting
     print("📞 Starting call...")
     response = requests.post(f"{API_BASE}/call/start", json={
-        "destination": "sip:1001@192.168.1.40:5060",
+        "destination": "sip:1001@YOUR_SIP_SERVER_IP:5060",
         "duration": 300,
         "audio_file": "welcome.wav",
         "play_after_seconds": 1
@@ -1264,13 +1266,13 @@ python3 ivr_call.py
 ```bash
 #!/bin/bash
 
-API_BASE="http://192.168.1.80:8000/api/v1"
+API_BASE="http://YOUR_SERVER_IP:8000/api/v1"
 
 # List of numbers to call
 NUMBERS=(
-    "sip:1001@192.168.1.40:5060"
-    "sip:1002@192.168.1.40:5060"
-    "sip:1003@192.168.1.40:5060"
+    "sip:1001@YOUR_SIP_SERVER_IP:5060"
+    "sip:1002@YOUR_SIP_SERVER_IP:5060"
+    "sip:1003@YOUR_SIP_SERVER_IP:5060"
 )
 
 # Call each number with a message
@@ -1339,7 +1341,7 @@ tail -100 /opt/linphone-caller/logs/app.log | grep "Call a1b2c3d4"
 
 **Naming:** `call_TIMESTAMP_DESTINATION_CALLID.log`
 
-**Example:** `call_20251222_103015_1001_at_192.168.1.40_5060_a1b2c3d4.log`
+**Example:** `call_20251222_103015_1001_at_YOUR_SIP_SERVER_IP_5060_a1b2c3d4.log`
 
 **Format:**
 ```
@@ -1347,7 +1349,7 @@ tail -100 /opt/linphone-caller/logs/app.log | grep "Call a1b2c3d4"
 LINPHONE CALL LOG
 ================================================================================
 Call ID:      a1b2c3d4-1234-5678-abcd-0123456789ab
-Destination:  sip:1001@192.168.1.40:5060
+Destination:  sip:1001@YOUR_SIP_SERVER_IP:5060
 Started:      2025-12-22 10:30:15.123
 ================================================================================
 
@@ -1380,7 +1382,7 @@ Started:      2025-12-22 10:30:15.123
 CALL SUMMARY
 ================================================================================
 Call ID:       a1b2c3d4-1234-5678-abcd-0123456789ab
-Destination:   sip:1001@192.168.1.40:5060
+Destination:   sip:1001@YOUR_SIP_SERVER_IP:5060
 Started:       2025-12-22 10:30:15
 Ended:         2025-12-22 10:31:00
 Duration:      45.23 seconds
@@ -1471,7 +1473,7 @@ file /opt/linphone-caller/assets/audio/your_audio.wav
 # Should show: RIFF (little-endian) data, WAVE audio
 
 # 3. Check call is active
-curl http://192.168.1.80:8000/api/v1/call/status
+curl http://YOUR_SERVER_IP:8000/api/v1/call/status
 # Status should be "active"
 
 # 4. Check per-call log for errors
@@ -1490,10 +1492,10 @@ tail -50 /opt/linphone-caller/logs/calls/call_*.log | grep -i error
 **Solution:**
 ```bash
 # Check call status
-curl http://192.168.1.80:8000/api/v1/call/status
+curl http://YOUR_SERVER_IP:8000/api/v1/call/status
 
 # If call is stuck, end it
-curl -X POST http://192.168.1.80:8000/api/v1/call/end
+curl -X POST http://YOUR_SERVER_IP:8000/api/v1/call/end
 
 # If that doesn't work, restart service
 sudo systemctl restart linphone-caller
@@ -1590,10 +1592,10 @@ ls -lh /opt/linphone-caller/config/linphonerc
 **Solution:**
 ```bash
 # 1. Check request included audio_file
-curl -X POST http://192.168.1.80:8000/api/v1/call/start \
+curl -X POST http://YOUR_SERVER_IP:8000/api/v1/call/start \
   -H 'Content-Type: application/json' \
   -d '{
-    "destination": "sip:1001@192.168.1.40:5060",
+    "destination": "sip:1001@YOUR_SIP_SERVER_IP:5060",
     "duration": 120,
     "audio_file": "greeting.wav",      # <- Must be present
     "play_after_seconds": 2             # <- Optional
@@ -1683,7 +1685,7 @@ curl -H "X-API-Key: your-secret-key-here" ...
 3. **Firewall Rules:**
 ```bash
 # Allow only specific IPs
-sudo ufw allow from 192.168.1.0/24 to any port 8000
+sudo ufw allow from YOUR_NETWORK_RANGE/24 to any port 8000  # e.g., 192.168.1.0/24 or 10.0.0.0/24
 ```
 
 4. **Rate Limiting:**
@@ -1769,7 +1771,7 @@ from slowapi import Limiter
 1. **Always check call status before operations:**
 ```bash
 # Before inject-audio or end
-curl http://192.168.1.80:8000/api/v1/call/status
+curl http://YOUR_SERVER_IP:8000/api/v1/call/status
 ```
 
 2. **Handle call timeouts gracefully:**
@@ -1794,7 +1796,7 @@ except Timeout:
 1. **Test audio files before production:**
 ```bash
 # Test with short call
-curl -X POST http://192.168.1.80:8000/api/v1/call/start \
+curl -X POST http://YOUR_SERVER_IP:8000/api/v1/call/start \
   -H 'Content-Type: application/json' \
   -d '{"destination":"sip:test@...", "duration":30, "audio_file":"test.wav"}'
 ```
@@ -1863,7 +1865,7 @@ tar -czf linphone-caller-backup-$(date +%Y%m%d).tar.gz /opt/linphone-caller
 
 **Developed by:** ratbalas  
 **Tested on:** Ubuntu 20.04 LTS  
-**VM:** 192.168.1.80  
+**VM:** YOUR_SERVER_IP  
 **Linphone:** linphone-cli (linphonec)  
 **Python:** 3.10+  
 **Framework:** FastAPI + Uvicorn  

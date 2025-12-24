@@ -20,12 +20,12 @@ This directory contains WAV audio files for injection into calls.
 
 2. **Upload to VM:**
    ```bash
-   scp your_audio.wav administrator@192.168.1.80:/opt/linphone-caller/assets/audio/
+   scp your_audio.wav YOUR_USERNAME@YOUR_SERVER_IP:/opt/linphone-caller/assets/audio/
    ```
 
 3. **Use in API:**
    ```bash
-   curl -X POST http://192.168.1.80:8000/api/v1/call/playAudio \
+   curl -X POST http://YOUR_SERVER_IP:8000/api/v1/call/playAudio \
      -H 'Content-Type: application/json' \
      -d '{"audio_file":"your_audio.wav"}'
    ```

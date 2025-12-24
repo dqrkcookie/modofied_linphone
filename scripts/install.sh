@@ -234,6 +234,6 @@ echo "   sudo systemctl status linphone-caller"
 echo "   curl http://localhost:8000/api/v1/health"
 echo ""
 echo "4. Make a test call:"
-echo "   curl -X POST http://localhost:8000/api/v1/call/start -d '{\"destination\":\"sip:1009999@192.168.1.40:5060\"}'"
+echo "   curl -X POST http://localhost:8000/api/v1/call/start -d '{\"destination\":\"sip:1009999@YOUR_SIP_SERVER_IP:5060\"}'"
 echo ""
 

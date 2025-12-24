@@ -41,6 +41,8 @@ A robust, asynchronous Python API that enables real-time audio injection into SI
 
 ## 🚀 Quick Start
 
+> 📘 **Note:** This documentation uses placeholder values like `YOUR_SERVER_IP` and `YOUR_SIP_SERVER_IP`. See [CONFIGURATION_GUIDE.md](CONFIGURATION_GUIDE.md) for details on how to replace these with your actual values.
+
 ### Prerequisites
 
 - **Ubuntu 20.04+** or similar Linux distribution
@@ -75,7 +77,7 @@ pip install -r requirements.txt
 python -m app.main
 
 # Or use uvicorn directly
-uvicorn app.main:app --host 0.0.0.0 --port 8000
+uvicorn app.main:app --host 0.0.0.0 --port 8000  # 0.0.0.0 binds to all network interfaces
 ```
 
 #### 4. Verify Installation
@@ -641,6 +643,18 @@ def handle_ivr_flow():
             "audio_file": "support_menu.wav"
         })
 ```
+
+---
+
+## 📚 Documentation
+
+- **[README.md](README.md)** - This file, main overview and quick start
+- **[CONFIGURATION_GUIDE.md](CONFIGURATION_GUIDE.md)** - ⭐ **How to configure IP addresses and network settings**
+- **[PRODUCTION_READY.md](PRODUCTION_READY.md)** - Complete production deployment guide
+- **[QUICK_REFERENCE.md](QUICK_REFERENCE.md)** - Quick command reference
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
+- **[CHANGELOG.md](CHANGELOG.md)** - Version history and changes
+- **[API Documentation](http://localhost:8000/docs)** - Interactive API docs (when server is running)
 
 ---
 
