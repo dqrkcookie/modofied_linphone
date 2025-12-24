@@ -1,0 +1,20 @@
+[Unit]
+Description=Linphone Caller HTTP API
+After=network.target
+
+[Service]
+Type=simple
+User=youruser
+WorkingDirectory=/path/to/linphone-caller
+Environment="PATH=/path/to/linphone-caller/venv/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="LINPHONERC=/path/to/linphone-caller/config/linphonerc"
+ExecStart=/path/to/linphone-caller/venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=linphone-caller
+
+[Install]
+WantedBy=multi-user.target
+

@@ -1,0 +1,20 @@
+[sip]
+default_proxy=0
+register_only_when_network_is_up=1
+register_only_when_upnp_is_ok=1
+
+[rtp]
+audio_rtp_port=7078
+video_rtp_port=9078
+
+[sound]
+echocancellation=0
+playback_dev_id=ALSA: default
+capture_dev_id=ALSA: default
+
+[video]
+enabled=0
+
+[net]
+mtu=1300
+
