@@ -213,7 +213,7 @@ Start a new outbound SIP call.
 | Field | Type | Required | Default | Description |
 |-------|------|----------|---------|-------------|
 | `destination` | string | ✅ Yes | - | SIP URI (must start with `sip:`) |
-| `duration` | integer | ❌ No | 120 | Max call duration in seconds (1-300) |
+| `duration` | integer | ❌ No | 120 | Max call duration in seconds (1-900, 15 minutes max) |
 | `audio_file` | string | ❌ No | null | WAV file to auto-play after answer |
 | `play_after_seconds` | integer | ❌ No | 0 | Delay before auto-play (0-60s) |
 

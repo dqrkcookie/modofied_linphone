@@ -267,7 +267,7 @@ Content-Type: application/json
 | Field | Type | Required | Default | Description |
 |-------|------|----------|---------|-------------|
 | `destination` | string | ✅ Yes | - | SIP URI (must start with `sip:`) |
-| `duration` | integer | ❌ No | 120 | Call duration in seconds (1-300) |
+| `duration` | integer | ❌ No | 120 | Call duration in seconds (1-900, 15 minutes max) |
 | `audio_file` | string | ❌ No | null | Audio file to auto-play when answered |
 | `play_after_seconds` | integer | ❌ No | 0 | Delay in seconds before auto-play (0-60) |
 

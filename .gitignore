@@ -60,6 +60,10 @@ htmlcov/
 # Audio files (except example files)
 assets/audio/*.wav
 !assets/audio/silence.wav
+!assets/audio/greeting.wav
+!assets/audio/menu_options.wav
+!assets/audio/test_audio.wav
+!assets/audio/welcome_message.wav
 !assets/audio/README.md
 
 # Temporary files

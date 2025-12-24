@@ -27,9 +27,9 @@ class CallStartRequest(BaseModel):
     )
     duration: Optional[int] = Field(
         None, 
-        description="Call duration in seconds (max 300, default 120)",
+        description="Call duration in seconds (max 900, default 120)",
         ge=1,
-        le=300
+        le=900
     )
     audio_file: Optional[str] = Field(
         None,
