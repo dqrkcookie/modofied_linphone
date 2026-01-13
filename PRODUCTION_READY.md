@@ -975,7 +975,7 @@ class Settings(BaseSettings):
 
     # Call Settings
     DEFAULT_CALL_DURATION: int = 120  # seconds
-    MAX_CALL_DURATION: int = 300      # seconds
+    MAX_CALL_DURATION: int = 900      # seconds (15 minutes)
     AUDIO_DIRECTORY: str = "assets/audio"
 
     # Linphone Settings
@@ -1629,7 +1629,7 @@ ls -lh /opt/linphone-caller/assets/audio/greeting.wav
 
 ### Call Limits
 
-- **Duration:** 1-300 seconds (configurable)
+- **Duration:** 1-900 seconds (configurable, 15 minutes max)
 - **Audio Injections:** Unlimited per call
 - **Audio File Size:** No hard limit (tested up to 5MB)
 - **Audio File Length:** No limit (tested up to 60 seconds)

@@ -18,8 +18,8 @@ class Settings(BaseSettings):
     WORKERS: int = 1
     
     # Call Settings
-    DEFAULT_CALL_DURATION: int = 120  # seconds
-    MAX_CALL_DURATION: int = 300  # seconds
+    DEFAULT_CALL_DURATION: int = 120  # seconds (2 minutes)
+    MAX_CALL_DURATION: int = 900  # seconds (15 minutes)
     AUDIO_DIRECTORY: str = "assets/audio"
     
     # Linphone Settings

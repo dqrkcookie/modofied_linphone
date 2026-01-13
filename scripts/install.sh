@@ -43,6 +43,11 @@ echo ""
 echo "3️⃣  Scripts should have execute permissions:"
 echo "   chmod +x scripts/*.sh"
 echo ""
+echo "4️⃣  If behind a corporate proxy, export proxy variables BEFORE running this script:"
+echo "   export HTTP_PROXY=http://proxy.company.com:8080"
+echo "   export HTTPS_PROXY=http://proxy.company.com:8080"
+echo "   export NO_PROXY=localhost,127.0.0.1"
+echo ""
 echo "======================================"
 echo ""
 
@@ -154,15 +159,34 @@ else
 fi
 echo ""
 
+# Check for proxy configuration
+PROXY_CONFIGURED="no"
+if [ -n "$HTTP_PROXY" ] || [ -n "$HTTPS_PROXY" ]; then
+    echo "[Proxy] Detected proxy configuration:"
+    [ -n "$HTTP_PROXY" ] && echo "  HTTP_PROXY=$HTTP_PROXY"
+    [ -n "$HTTPS_PROXY" ] && echo "  HTTPS_PROXY=$HTTPS_PROXY"
+    PROXY_CONFIGURED="yes"
+    echo ""
+fi
+
 # Upgrade pip
 echo "[5/7] Upgrading pip..."
-pip install --upgrade pip > /dev/null 2>&1
+if [ "$PROXY_CONFIGURED" = "yes" ]; then
+    HTTP_PROXY="$HTTP_PROXY" HTTPS_PROXY="$HTTPS_PROXY" pip install --upgrade pip > /dev/null 2>&1
+else
+    pip install --upgrade pip > /dev/null 2>&1
+fi
 echo "✓ pip upgraded"
 echo ""
 
 # Install dependencies
 echo "[6/7] Installing Python dependencies..."
-pip install -r requirements.txt
+if [ "$PROXY_CONFIGURED" = "yes" ]; then
+    echo "  pip install using proxy: $HTTP_PROXY"
+    HTTP_PROXY="$HTTP_PROXY" HTTPS_PROXY="$HTTPS_PROXY" pip install -r requirements.txt
+else
+    pip install -r requirements.txt
+fi
 echo "✓ Dependencies installed"
 echo ""
 
@@ -236,4 +260,3 @@ echo ""
 echo "4. Make a test call:"
 echo "   curl -X POST http://localhost:8000/api/v1/call/start -d '{\"destination\":\"sip:1009999@YOUR_SIP_SERVER_IP:5060\"}'"
 echo ""
-
