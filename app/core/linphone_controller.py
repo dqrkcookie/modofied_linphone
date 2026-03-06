@@ -190,9 +190,31 @@ class LinphoneController:
             linphone_bin = self.settings.LINPHONE_BINARY
             linphone_config = self._get_linphone_config_path()
             
+            # CRITICAL: Clean up old Linphone database to ensure new config is used
+            # The old database at ~/.local/share/linphone/ can be locked and prevent new config from loading
+            old_db_path = Path.home() / ".local" / "share" / "linphone"
+            if old_db_path.exists():
+                call.logger.warning(f"🗑️  Removing old Linphone database to ensure clean start: {old_db_path}")
+                try:
+                    shutil.rmtree(old_db_path)
+                    call.logger.info(f"✓ Old database removed")
+                except Exception as e:
+                    call.logger.warning(f"Could not remove old database: {e}")
+            
+            # Ensure tmp directories exist for new database
+            tmp_linphone_dir = Path("/tmp/linphone")
+            tmp_cache_dir = Path("/tmp/linphone-cache")
+            for tmp_dir in [tmp_linphone_dir, tmp_cache_dir]:
+                tmp_dir.mkdir(parents=True, exist_ok=True)
+                call.logger.info(f"✓ Ensured directory exists: {tmp_dir}")
+            
             # Set LINPHONERC environment variable for config
             env = os.environ.copy()
             env['LINPHONERC'] = str(linphone_config)
+            
+            # Force Linphone to use new config and temp directories
+            env['LC_HOME'] = str(tmp_linphone_dir)
+            env['HOME'] = str(tmp_linphone_dir)  # Override HOME to force use of /tmp/linphone
             
             # Verify linphonec exists
             if not shutil.which(linphone_bin.split('/')[-1]):
@@ -223,8 +245,17 @@ class LinphoneController:
             asyncio.create_task(self._read_linphone_output(call))
             asyncio.create_task(self._read_linphone_stderr(call))
             
-            # Wait for linphonec to initialize
-            await asyncio.sleep(2)
+            # Wait for linphonec to initialize and register to SIP server
+            # Increased from 2s to 5s to allow time for SIP registration
+            call.logger.info("⏳ Waiting for Linphone to initialize and register to SIP server...")
+            await asyncio.sleep(5)
+            
+            # Check registration status by requesting info
+            if process.stdin and not process.stdin.is_closing():
+                call.logger.info("📋 Checking SIP registration status...")
+                process.stdin.write(b"info\n")
+                await process.stdin.drain()
+                await asyncio.sleep(1)
             
             # Check if process is still alive
             if process.returncode is not None:
