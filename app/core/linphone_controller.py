@@ -201,20 +201,28 @@ class LinphoneController:
                 except Exception as e:
                     call.logger.warning(f"Could not remove old database: {e}")
             
-            # Ensure tmp directories exist for new database
+            # Ensure tmp directories exist for new database with proper structure
             tmp_linphone_dir = Path("/tmp/linphone")
             tmp_cache_dir = Path("/tmp/linphone-cache")
             for tmp_dir in [tmp_linphone_dir, tmp_cache_dir]:
                 tmp_dir.mkdir(parents=True, exist_ok=True)
                 call.logger.info(f"✓ Ensured directory exists: {tmp_dir}")
             
+            # Clean up any stale database files in tmp to ensure fresh start
+            db_file = tmp_linphone_dir / "linphone.db"
+            if db_file.exists():
+                try:
+                    db_file.unlink()
+                    call.logger.info(f"✓ Removed stale database file: {db_file}")
+                except Exception as e:
+                    call.logger.warning(f"Could not remove stale database: {e}")
+            
             # Set LINPHONERC environment variable for config
             env = os.environ.copy()
             env['LINPHONERC'] = str(linphone_config)
             
-            # Force Linphone to use new config and temp directories
+            # Force Linphone to use temp directories
             env['LC_HOME'] = str(tmp_linphone_dir)
-            env['HOME'] = str(tmp_linphone_dir)  # Override HOME to force use of /tmp/linphone
             
             # Verify linphonec exists
             if not shutil.which(linphone_bin.split('/')[-1]):
@@ -228,7 +236,12 @@ class LinphoneController:
                     )
             
             # Start linphonec process
-            cmd = [linphone_bin, '-c', str(linphone_config)]
+            # Use explicit --db parameter to override database path
+            cmd = [
+                linphone_bin, 
+                '-c', str(linphone_config),
+                '--db', '/tmp/linphone/linphone.db'  # Explicit database location
+            ]
             call.logger.info(f"📞 Starting linphonec: {' '.join(cmd)}")
             
             process = await asyncio.create_subprocess_exec(
@@ -378,6 +391,10 @@ class LinphoneController:
                         if call_id_match and call.linphone_call_id is None:
                             call.linphone_call_id = int(call_id_match.group(1))
                             call.logger.info(f"📞 Detected linphone call ID: {call.linphone_call_id}")
+                            # When Call ID is detected, call is actually being made
+                            if call.status == CallStatus.INITIATED:
+                                call.update_status(CallStatus.RINGING)
+                                call.logger.info(f"🔔 Call detected as ringing")
                         
                         # Parse linphonec text-based output
                         lower_output = output.lower()
@@ -388,7 +405,7 @@ class LinphoneController:
                                 call.update_status(CallStatus.RINGING)
                             call.logger.info(f"🔔 Call ringing")
                         
-                        elif "connected" in lower_output:
+                        elif "connected" in lower_output or "ok" in lower_output:
                             # Call connected
                             call.logger.info(f"✓ Call connected")
                             if call.status in [CallStatus.INITIATED, CallStatus.RINGING]:
@@ -434,10 +451,10 @@ class LinphoneController:
                             # The monitor task will see status changed and exit
                             # Then end_call() will be called to cleanup the process
                         
-                        elif "failed" in lower_output or "error" in lower_output:
-                            # Only mark as failed if it's a real error (not "unknown error" from remote hangup)
-                            if "unknown error" not in lower_output:
-                                call.logger.error(f"❌ Call failed")
+                        elif "failed" in lower_output or "cannot" in lower_output:
+                            # Only mark as failed if it's a real error (not just a linphone internal message)
+                            if "cannot" in lower_output and "understand" not in lower_output:
+                                call.logger.error(f"❌ Call failed: {output}")
                                 call.update_status(CallStatus.FAILED)
                                 
                                 # Schedule cleanup (can't await here as we're in a loop)

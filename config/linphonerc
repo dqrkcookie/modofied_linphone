@@ -30,6 +30,10 @@ capture_dev_id=ALSA: default
 enabled=0
 display=none
 capture=none
+videocap_name=none
+
+[call]
+video_policy=0
 
 [net]
 mtu=1300
