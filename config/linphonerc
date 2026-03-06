@@ -6,15 +6,15 @@ guess_hostname=0
 
 [proxy_0]
 reg_proxy=sip:192.168.15.2:5060;transport=udp
-reg_identity=sip:TG1600A1@192.168.15.2
+reg_identity=sip:TG1600A2@192.168.15.2
 reg_expires=3600
 realm=192.168.15.2
 reg_sendregister=1
 
 [auth_info_0]
-username=TG1600A1
+username=TG1600A2
 realm=192.168.15.2
-passwd=pincodeaiagent0001@@
+passwd=0c1480467900a899e1c2aea2fa2c7388
 domain=192.168.15.2
 
 [rtp]
