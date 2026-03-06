@@ -201,6 +201,12 @@ class LinphoneController:
                 except Exception as e:
                     call.logger.warning(f"Could not remove old database: {e}")
             
+            # Create the expected directory structure (.local/share/linphone/) that Linphone needs
+            # Linphone will try to create this but may fail in WSL, so we create it proactively
+            linphone_db_dir = Path.home() / ".local" / "share" / "linphone"
+            linphone_db_dir.mkdir(parents=True, exist_ok=True)
+            call.logger.info(f"✓ Created Linphone database directory: {linphone_db_dir}")
+            
             # Ensure tmp directories exist for new database with proper structure
             tmp_linphone_dir = Path("/tmp/linphone")
             tmp_cache_dir = Path("/tmp/linphone-cache")
@@ -453,15 +459,16 @@ class LinphoneController:
                             # The monitor task will see status changed and exit
                             # Then end_call() will be called to cleanup the process
                         
-                        elif "failed" in lower_output or "cannot" in lower_output:
-                            # Only mark as failed if it's a real error (not just a linphone internal message)
-                            if "cannot" in lower_output and "understand" not in lower_output:
+                        elif "failed" in lower_output or "error" in lower_output:
+                            # Only mark as failed for actual call failures, not initialization warnings
+                            # Ignore: database errors, ALSA errors, audio warnings (these happen during init)
+                            if any(x in lower_output for x in ["database", "alsa", "soundcard", "unable to build db"]):
+                                # These are initialization warnings, not actual call failures
+                                pass
+                            elif "declined" in lower_output or "busy" in lower_output or "call failed" in lower_output:
+                                # These are actual call failures
                                 call.logger.error(f"❌ Call failed: {output}")
                                 call.update_status(CallStatus.FAILED)
-                                
-                                # Schedule cleanup (can't await here as we're in a loop)
-                                # The monitor task will see status changed and exit
-                                # Then end_call() will be called to cleanup the process
         
         except Exception as e:
             call.logger.warning(f"Error reading linphone output: {e}")
