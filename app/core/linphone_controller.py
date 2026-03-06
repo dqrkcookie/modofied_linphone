@@ -221,8 +221,12 @@ class LinphoneController:
             env = os.environ.copy()
             env['LINPHONERC'] = str(linphone_config)
             
-            # Force Linphone to use temp directories
+            # Set LINPHONE_HOME to use temp directory (controls where .local/share/linphone/ is created)
+            env['LINPHONE_HOME'] = str(tmp_linphone_dir)
+            # Also try LC_HOME for some versions
             env['LC_HOME'] = str(tmp_linphone_dir)
+            # Set XDG_DATA_HOME to redirect .local/share to temp directory
+            env['XDG_DATA_HOME'] = str(tmp_linphone_dir)
             
             # Verify linphonec exists
             if not shutil.which(linphone_bin.split('/')[-1]):
@@ -236,12 +240,10 @@ class LinphoneController:
                     )
             
             # Start linphonec process
-            # Use explicit --db parameter to override database path
-            cmd = [
-                linphone_bin, 
-                '-c', str(linphone_config),
-                '--db', '/tmp/linphone/linphone.db'  # Explicit database location
-            ]
+            # Note: This version of linphonec doesn't support --db parameter
+            # Database path is controlled via config file and environment variables
+            # Add -d 2 for debug output to see what's happening
+            cmd = [linphone_bin, '-c', str(linphone_config), '-d', '2']
             call.logger.info(f"📞 Starting linphonec: {' '.join(cmd)}")
             
             process = await asyncio.create_subprocess_exec(
